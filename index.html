@@ -69,7 +69,7 @@
     .player-card{padding:14px; border-radius:14px; background:linear-gradient(135deg, rgba(124,58,237,.06), rgba(34,211,238,.04)); border:1px solid rgba(255,255,255,.06)}
 
     /* The frame contains the video/placeholder and the shimmer overlay.  */
-    /* Instagram square requested -> use 1/1 aspect ratio */
+    /* Square player: 1:1 aspect ratio */
     .frame{position:relative; aspect-ratio:1/1; width:100%; border-radius:12px; background:#050615; overflow:hidden}
 
     /* Shimmer overlay applied to the frame only, so it stays inside the video box */
@@ -93,6 +93,9 @@
 
     /* small screens: make calendar more breathable */
     @media (max-width:520px){ .grid{gap:8px} .day{min-height:72px} }
+
+    /* iframe fill helper */
+    .player-iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block}
   </style>
 </head>
 <body>
@@ -105,13 +108,12 @@
           </svg>
         </div>
         <div class="title">
-          <h1>100 Press‑Ups a Day — September</h1>
+          <h1>100 Press-Ups a Day — September</h1>
           <p>Watch the daily video & support <strong>Cancer Research UK</strong>.</p>
         </div>
       </div>
 
       <div class="cta-row">
-        <!-- Updated donate URL exactly as requested -->
         <a class="btn primary" target="_blank" rel="noopener" href="https://fundraise.cancerresearchuk.org/donate/06482e6c-ac34-486c-88b0-5bf586f30cf8/details" title="Donate to Cancer Research UK">Donate</a>
         <button class="btn ghost" id="latestBtn" title="Jump to the latest uploaded video">Watch Latest</button>
       </div>
@@ -126,7 +128,6 @@
             <h2 id="monthLabel">September 2025</h2>
             <div class="legend"><span class="dot" style="background:rgba(16,185,129,.9);width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:8px"></span> Video added <span style="margin-left:14px;display:inline-block;width:10px;height:10px;border-radius:999px;background:rgba(239,68,68,.8);margin-right:8px"></span> No video yet</div>
           </div>
-          <!-- removed month navigation — this site is September-only per request -->
         </div>
 
         <!-- day-of-week header -->
@@ -151,18 +152,18 @@
               <strong id="selectedDateLabel">No date selected</strong>
               <div><small id="statusLabel">Click a day on the calendar to play the video.</small></div>
             </div>
-            <div>
+            <div style="display:flex; gap:8px; align-items:center">
               <a class="btn primary" target="_blank" rel="noopener" href="https://fundraise.cancerresearchuk.org/donate/06482e6c-ac34-486c-88b0-5bf586f30cf8/details">Donate Now</a>
+              <!-- Open on YouTube fallback; hidden until a video is loaded -->
+              <a id="openOnYouTube" class="btn ghost" target="_blank" rel="noopener" href="#" style="display:none">Open on YouTube</a>
             </div>
           </div>
         </div>
-
-        <!-- Removed the visible "how to add" block. (Comment remains in JS below.) -->
       </section>
     </main>
 
     <footer>
-      <p>Built by Joshua for the September 100 press‑ups challenge. Thank you for supporting life‑saving research.</p>
+      <p>Built by Joshua for the September 100 press-ups challenge. Thank you for supporting life-saving research.</p>
     </footer>
   </div>
 
@@ -171,18 +172,22 @@
        Configuration: edit this object only
        Keys must be exact ISO dates (YYYY-MM-DD). Only September entries are relevant.
 
-       NOTE: we store Instagram embed HTML as the value for demo content so the
-       embed code is used verbatim. For daily updates you can either paste the
-       full blockquote embed (like the demo) or store the permalink and build
-       the blockquote string dynamically. You know how to do this now — kept as
-       a comment per your request.
+       To add a new video, add a single line like:
+         '2025-09-02': 'https://youtube.com/shorts/VIDEO_ID',
+       Supported URL forms:
+         - https://youtube.com/watch?v=VIDEO_ID
+         - https://youtu.be/VIDEO_ID
+         - https://youtube.com/shorts/VIDEO_ID
+         - https://www.youtube.com/embed/VIDEO_ID
+       The script will extract the VIDEO_ID and create an iframe that fills the square player.
+
+       NOTE: values should be plain strings (URLs). Avoid pasting entire iframe HTML — the script handles URLs cleanly.
        ========================= */
 
     const videosByDate = {
-      // demo — the exact Instagram embed block is stored here so it renders
-      '2025-09-01': `
-<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DEGZx8IISJ4/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/reel/DEGZx8IISJ4/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/reel/DEGZx8IISJ4/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by FT (@24jesusislord)</a></p></div></blockquote>
-` 
+      // Day 1 (you supplied this link)
+      '2025-09-01': 'https://youtube.com/shorts/2EaHb57-M04?feature=share'
+      // add more days here in the same format
     };
 
     /* -------------------------
@@ -196,6 +201,7 @@
     const selectedDateLabel = document.getElementById('selectedDateLabel');
     const statusLabel = document.getElementById('statusLabel');
     const latestBtn = document.getElementById('latestBtn');
+    const openOnYouTube = document.getElementById('openOnYouTube');
 
     // Fixed target (September 2025)
     const TARGET_YEAR = 2025;
@@ -206,44 +212,125 @@
        ------------------------- */
     function pad(n){ return String(n).padStart(2,'0'); }
 
-    // Guarded history update — some embedded viewers (about:srcdoc) throw if replaceState is used.
     function safeSetHash(iso){
       try {
         if(typeof history.replaceState === 'function') history.replaceState(null,'',`#${iso}`);
         else location.hash = `#${iso}`;
       } catch (err) {
-        // swallow SecurityError in sandboxed previews — hash is a convenience only
+        // ignore
       }
     }
 
-    /* -------------------------
-       Player rendering for Instagram
-       - We keep the frame element intact (so the shimmer overlay remains attached)
-       - For Instagram embeds we insert the provided blockquote HTML and then
-         call the Instagram embed processor so the embed script can render it.
-       ------------------------- */
-    function makePlayer(embedHTML){
-      // remove shimmer because we're about to show real content
-      playerFrame.classList.remove('shimmer');
-      playerMount.innerHTML = embedHTML || '';
-
-      // Instagram's embed script exposes window.instgrm. If available, process newly-added embeds.
-      try {
-        if(window.instgrm && typeof window.instgrm.Embeds !== 'undefined' && typeof window.instgrm.Embeds.process === 'function'){
-          window.instgrm.Embeds.process();
-        } else if(typeof instgrm !== 'undefined' && instgrm && typeof instgrm.Embeds !== 'undefined'){
-          instgrm.Embeds.process();
-        }
-      } catch(e){
-        // If embed processing fails in this environment, don't crash — user can open the permalink instead
-        console.warn('Instagram embed processing failed', e);
-      }
-    }
-
-    // Show placeholder and re-enable shimmer
     function showPlaceholder(){
       playerMount.innerHTML = '<div class="placeholder">Select a date to watch the video</div>';
       playerFrame.classList.add('shimmer');
+      openOnYouTube.style.display = 'none';
+      openOnYouTube.href = '#';
+    }
+
+    /* Extract YouTube video ID from common URL forms.
+       Returns 11-character ID or null.
+    */
+    function parseYouTubeID(url){
+      if(!url || typeof url !== 'string') return null;
+      const s = url.trim();
+
+      // common patterns: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/shorts/ID, youtube.com/embed/ID
+      const m = s.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/);
+      if(m && m[1]) return m[1];
+
+      // fallback: try URLSearchParams for v=
+      try {
+        const u = new URL(s, 'https://example.com');
+        const v = u.searchParams.get('v');
+        if(v && /^[A-Za-z0-9_-]{11}$/.test(v)) return v;
+      } catch(e){ /* ignore malformed URL */ }
+
+      // final fallback: last path segment (may catch some valid IDs)
+      const seg = s.split('/').filter(Boolean).pop().split('?')[0];
+      if(seg && /^[A-Za-z0-9_-]{11}$/.test(seg)) return seg;
+
+      return null;
+    }
+
+    /* Build the player inside the square frame.
+       Accepts either:
+         - a URL string (common case)
+         - or an HTML string containing an iframe (less common)
+    */
+    function makePlayerFromSource(source){
+      playerFrame.classList.remove('shimmer');
+      playerMount.innerHTML = ''; // clear
+
+      if(!source) {
+        showPlaceholder();
+        return;
+      }
+
+      if(typeof source !== 'string') {
+        // not expected, but fallback
+        playerMount.innerHTML = '<div class="placeholder">Invalid video source</div>';
+        return;
+      }
+
+      const trimmed = source.trim();
+
+      // If the user accidentally pasted full iframe or embed HTML, insert it directly.
+      if(trimmed.startsWith('<') && trimmed.indexOf('iframe') !== -1){
+        // ensure the embedded iframe fills the container
+        // wrap in a container and force the iframe to absolute fill
+        playerMount.innerHTML = '<div style="position:relative;height:100%;">' + trimmed + '</div>';
+        // try to find and adjust iframe attributes
+        const iframe = playerMount.querySelector('iframe');
+        if(iframe){
+          iframe.classList.add('player-iframe');
+          iframe.removeAttribute('width');
+          iframe.removeAttribute('height');
+          iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+          iframe.setAttribute('allowfullscreen','');
+        }
+        // Set openOnYouTube to point to src (if present)
+        const src = (playerMount.querySelector('iframe') || {}).src || null;
+        if(src){
+          openOnYouTube.href = src;
+          openOnYouTube.style.display = 'inline-flex';
+        } else {
+          openOnYouTube.style.display = 'none';
+        }
+        return;
+      }
+
+      // Otherwise treat as URL
+      const id = parseYouTubeID(trimmed);
+      if(!id){
+        // If we can't parse, show a fallback link
+        playerMount.innerHTML = `<div class="placeholder">Can't parse the YouTube URL. <div style="margin-top:10px"><a target="_blank" rel="noopener" href="${escapeHtml(trimmed)}">Open link</a></div></div>`;
+        openOnYouTube.href = trimmed;
+        openOnYouTube.style.display = 'inline-flex';
+        return;
+      }
+
+      // Use privacy-enhanced YouTube domain to reduce tracking (you can switch to normal domain if you prefer)
+      const embedUrl = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+
+      const iframe = document.createElement('iframe');
+      iframe.className = 'player-iframe';
+      iframe.src = embedUrl;
+      iframe.setAttribute('frameborder','0');
+      iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      iframe.setAttribute('allowfullscreen','');
+      iframe.title = 'YouTube video player';
+
+      // Provide a small accessible fallback link for users who want to open on YouTube
+      openOnYouTube.href = `https://youtube.com/watch?v=${id}`;
+      openOnYouTube.style.display = 'inline-flex';
+
+      playerMount.appendChild(iframe);
+    }
+
+    // simple escaper for inserting unknown hrefs into markup (used only for fallback link)
+    function escapeHtml(s){
+      return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
     /* -------------------------
@@ -307,10 +394,15 @@
        ------------------------- */
     function selectDate(iso){
       selectedDateLabel.textContent = new Date(iso).toDateString();
-      const embedHTML = videosByDate[iso];
-      if(embedHTML){
+      const source = videosByDate[iso];
+      if(source){
         statusLabel.textContent = 'Loading…';
-        makePlayer(embedHTML);
+        try {
+          makePlayerFromSource(source);
+        } catch(e){
+          console.error('Player render failed', e);
+          playerMount.innerHTML = '<div class="placeholder">Video failed to load.</div>';
+        }
         try { document.getElementById('playerFrame')?.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){}
         safeSetHash(iso);
       } else {
@@ -344,6 +436,7 @@
     // Auto-open demo day 1 if present
     const demoIso = `${TARGET_YEAR}-09-01`;
     if(videosByDate[demoIso]){
+      // small delay so the calendar renders first
       setTimeout(()=>selectDate(demoIso), 120);
     }
 
@@ -358,7 +451,6 @@
 
   </script>
 
-  <!-- Instagram embed script: required to render blockquote embeds properly -->
-  <script async src="//www.instagram.com/embed.js"></script>
+  <!-- Instagram embed script removed — not needed anymore -->
 </body>
 </html>
