@@ -4,98 +4,164 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>100 Pressup Fundraiser</title>
-  <meta name="description" content="Joshua's 100 press-ups a day in September. Watch daily videos and donate to Cancer Research UK." />
+  <meta name="description" content="Joshua's 100 press-ups a day in September. Watch daily videos & donate to Cancer Research UK." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0f1223;         /* deep navy */
-      --panel:#171a34;      /* card */
-      --ink:#e8ebff;        /* text */
-      --muted:#9aa3c7;      /* secondary text */
-      --brand:#7c3aed;      /* purple */
-      --brand-2:#22d3ee;    /* cyan */
-      --accent:#10b981;     /* green */
-      --danger:#ef4444;     /* red */
+      --bg:#0f1223;
+      --panel:#171a34;
+      --ink:#e8ebff;
+      --muted:#9aa3c7;
+      --brand:#7c3aed;
+      --brand-2:#22d3ee;
+      --accent:#10b981;
+      --danger:#ef4444;
       --shadow: 0 15px 40px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{min-height:100vh;height:100%}
     body{
-      margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--ink); background:
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background-color:var(--bg);
+      background-image:
         radial-gradient(1200px 600px at 10% -10%, rgba(124,58,237,.25), transparent 60%),
         radial-gradient(800px 400px at 100% 0%, rgba(34,211,238,.25), transparent 50%),
-        var(--bg);
+        linear-gradient(180deg, var(--bg), #070712 140%);
+      background-repeat:no-repeat;
+      background-size:cover;
       overflow-x:hidden;
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      -webkit-overflow-scrolling:touch;
     }
 
-    .container{max-width:1100px; margin:0 auto; padding:24px}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
 
-    header{display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap}
-    .brand{display:flex; gap:14px; align-items:center}
-    .logo{width:42px; height:42px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow:var(--shadow);}    
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:var(--shadow)}
     .title h1{margin:0;font-size:clamp(20px,2.4vw,34px)}
     .title p{margin:4px 0 0;color:var(--muted);font-weight:600}
 
-    .cta-row{display:flex; gap:12px; align-items:center}
+    .cta-row{display:flex;gap:12px;align-items:center}
     .btn{appearance:none;border:none;cursor:pointer;font-weight:800;padding:10px 14px;border-radius:12px;display:inline-flex;align-items:center;gap:8px}
-    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:white}
-    .btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.08)}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:white;box-shadow:0 8px 24px rgba(124,58,237,.12)}
+    .btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.06)}
 
-    main{display:grid; grid-template-columns:1.15fr .85fr; gap:20px; margin-top:18px}
+    main{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;margin-top:18px}
     @media (max-width:980px){main{grid-template-columns:1fr}}
 
-    .panel{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:var(--shadow)}
+    .panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;box-shadow:var(--shadow)}
     .calendar{padding:18px}
-    .cal-header{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px}
-    .legend{display:flex; gap:10px; align-items:center; color:var(--muted)}
+    .cal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .legend{display:flex;gap:12px;align-items:center;color:var(--muted);font-weight:700;font-size:13px}
+    .legend .key{width:14px;height:14px;border-radius:4px;display:inline-block;box-shadow:0 6px 18px rgba(0,0,0,.28)}
 
-    /* Calendar grid */
-    .grid{display:grid; gap:10px; grid-template-columns:repeat(7,1fr)}
-    .dow{color:var(--muted); font-weight:700; text-align:center}
+    /* Grid */
+    .grid{display:grid;gap:10px;grid-template-columns:repeat(7,1fr)}
+    .dow{color:var(--muted);font-weight:700;text-align:center;padding-bottom:4px}
 
-    .day{position:relative; min-height:88px; padding:10px; border-radius:12px; overflow:hidden; cursor:pointer; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.06); transition:transform .12s ease, border-color .12s ease}
-    .day:hover{transform:translateY(-3px); border-color:rgba(255,255,255,.18)}
+    /* day square larger padding so text doesn't leak */
+    .day{position:relative;min-height:84px;padding:14px;border-radius:12px;overflow:hidden;cursor:pointer;
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.06);
+      transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease,background .18s ease;display:flex;flex-direction:column;align-items:flex-start;
+    }
+    .day:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16)}
     .day.is-empty{opacity:.45}
-    .num{font-weight:800; font-size:16px}
-    .badge{position:absolute; right:8px; top:8px; font-size:12px; padding:4px 8px; border-radius:999px; background:rgba(16,185,129,.15); color:#d1fae5; border:1px solid rgba(16,185,129,.35)}
-    .badge.miss{background:rgba(239,68,68,.12); color:#fecaca; border-color:rgba(239,68,68,.3)}
+    .num{font-weight:800;font-size:16px;z-index:2}
+    .day .label{margin-top:auto;font-size:12px;color:var(--muted);opacity:.85}
+
+    .day.has-video{
+      background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(34,211,238,.06));
+      border:1px solid rgba(124,58,237,.12);
+      box-shadow: 0 8px 18px rgba(34,50,80,.18) inset, 0 10px 30px rgba(12,14,24,.45);
+      color:var(--ink);
+    }
+    .day.no-video{
+      background:linear-gradient(135deg,rgba(239,68,68,.06),rgba(239,68,68,.02));
+      border:1px solid rgba(239,68,68,.08);
+      box-shadow:0 6px 16px rgba(240,90,90,.04) inset;
+      color:var(--ink);
+    }
+
+    .day.has-video::after,.day.no-video::after{content:'';position:absolute;right:8px;bottom:8px;width:18px;height:18px;border-radius:6px;z-index:2}
+    .day.has-video::after{background:linear-gradient(135deg,var(--accent),rgba(16,185,129,.7));box-shadow:0 6px 14px rgba(16,185,129,.06)}
+    .day.no-video::after{background:linear-gradient(135deg,var(--danger),rgba(239,68,68,.8));box-shadow:0 6px 14px rgba(239,68,68,.04)}
 
     /* Player side */
+    .right-col{display:flex;flex-direction:column;gap:12px}
     .player{padding:16px}
-    .player-card{padding:14px; border-radius:14px; background:linear-gradient(135deg, rgba(124,58,237,.06), rgba(34,211,238,.04)); border:1px solid rgba(255,255,255,.06)}
+    .player-card{padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(34,211,238,.04));border:1px solid rgba(255,255,255,.06)}
 
-    /* The frame contains the video/placeholder and the shimmer overlay.  */
-    /* Square player: 1:1 aspect ratio */
-    .frame{position:relative; aspect-ratio:1/1; width:100%; border-radius:12px; background:#050615; overflow:hidden}
-
-    /* Shimmer overlay applied to the frame only, so it stays inside the video box */
-    .frame.shimmer::after{
-      content:""; position:absolute; inset:0; pointer-events:none; border-radius:12px;
-      background:linear-gradient(120deg, transparent 15%, rgba(255,255,255,.06) 35%, transparent 55%);
-      transform:translateX(-160%); animation:shine 2s linear infinite;
-    }
+    .frame{position:relative;aspect-ratio:1/1;width:100%;border-radius:12px;background:#050615;overflow:hidden}
+    .frame.shimmer::after{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(120deg,transparent 15%,rgba(255,255,255,.06) 35%,transparent 55%);transform:translateX(-160%);animation:shine 2s linear infinite}
     @keyframes shine{to{transform:translateX(160%)}}
+    .placeholder{display:grid;place-items:center;height:100%;color:var(--muted);font-weight:700}
 
-    /* simple placeholder text inside the player before a video is loaded */
-    .placeholder{display:grid; place-items:center; height:100%; color:var(--muted); font-weight:700}
-
-    .meta{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px}
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px}
     .meta small{color:var(--muted)}
 
-    footer{margin:28px 0 8px; color:var(--muted); text-align:center}
+    footer{margin:28px 0 8px;color:var(--muted);text-align:center}
+    .day:focus{outline:3px solid rgba(124,58,237,.25);outline-offset:3px}
 
-    /* Accessibility focus styles */
-    .day:focus{outline:3px solid rgba(124,58,237,.25); outline-offset:3px}
+    @media (max-width:520px){
+      .grid{gap:8px}
+      .day{min-height:60px;padding:10px;border-radius:10px}
+      .num{font-size:15px}
+    }
 
-    /* small screens: make calendar more breathable */
-    @media (max-width:520px){ .grid{gap:8px} .day{min-height:72px} }
+    .player-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 
-    /* iframe fill helper */
-    .player-iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block}
+    /* Floating tube (no wave). Rounded fill that respects rounded corners. */
+    .shave-floating{position:fixed;right:18px;bottom:22px;z-index:999;display:flex;align-items:center;gap:12px;pointer-events:auto}
+    .shave-tube{width:72px;height:240px;border-radius:40px;padding:10px;background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,.06);box-shadow:0 26px 56px rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;cursor:pointer;position:relative;backdrop-filter:blur(6px);transition:transform .18s ease,box-shadow .18s ease}
+    .shave-tube:hover{transform:translateY(-4px);box-shadow:0 36px 72px rgba(0,0,0,.6)}
+    .shave-label{position:absolute;top:-36px;left:50%;transform:translateX(-50%);font-weight:900;font-size:14px;color:var(--muted);background:rgba(255,255,255,0.03);padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.04);box-shadow:0 12px 30px rgba(0,0,0,.45);backdrop-filter:blur(6px)}
+    /* haircut emoji with subtle ring */
+    .shave-emoji{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:18px;line-height:1;display:grid;place-items:center;width:30px;height:30px;border-radius:999px;background:transparent}
+    .shave-emoji::after{content:'';position:absolute;inset:-6px;border-radius:999px;box-shadow:0 0 0 3px rgba(124,58,237,.06);opacity:0;transition:opacity .18s ease, transform .18s ease}
+    .shave-tube:hover .shave-emoji::after{opacity:1;transform:scale(1.02)}
+    /* click hint shown on hover (small and minimal) */
+    .click-hint{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);opacity:0;transition:opacity .18s ease;pointer-events:none}
+    .shave-tube:hover .click-hint{opacity:1}
+
+    .tube-track{position:absolute;left:10px;right:10px;top:10px;bottom:10px;border-radius:999px;overflow:hidden;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(255,255,255,.01))}
+    .tube-fill{position:absolute;left:0;right:0;bottom:0;height:0%;border-radius:999px;background:linear-gradient(180deg,var(--brand-2),var(--brand));box-shadow:inset 0 8px 20px rgba(0,0,0,.35);transition:height 900ms cubic-bezier(.2,.9,.3,1)}
+
+    /* floating donation label above the fill (absolute inside tube-track) */
+    .current-label{position:absolute;left:50%;transform:translateX(-50%);font-weight:900;font-size:12px;color:var(--muted);background:rgba(0,0,0,0.35);padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.03);backdrop-filter:blur(4px);pointer-events:none;display:none}
+
+    /* Modal fade (gentle) */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1200;opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .modal-backdrop.visible{opacity:1;pointer-events:auto}
+    .modal{width:min(520px,94%);background:rgba(255,255,255,0.02);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,.06);box-shadow:0 40px 80px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
+    .modal h3{margin:0 0 8px 0}
+    .modal p{margin:0 0 14px 0;color:var(--muted)}
+    .modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+
+    /* Unlock cards spacing */
+    .unlock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px}
+    @media (max-width:680px){.unlock-grid{grid-template-columns:1fr}}
+    .unlock-card{border-radius:14px;padding:20px;display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.04);box-shadow:0 16px 36px rgba(4,6,12,.6);transition:transform .14s ease,box-shadow .14s ease;min-height:100px}
+    .unlock-card:hover{transform:translateY(-4px);box-shadow:0 28px 56px rgba(4,6,12,.7)}
+    .unlock-icon{width:64px;height:64px;border-radius:14px;display:grid;place-items:center;font-weight:900;color:white;flex:0 0 64px;font-size:18px}
+    .unlock-info{flex:1}
+    .unlock-amount{font-weight:900;font-size:16px}
+    .unlock-desc{color:var(--muted);font-weight:700;margin-top:6px;font-size:14px;line-height:1.2}
+    .icon-5{background:linear-gradient(135deg,#6ee7b7,#3b82f6)}
+    .icon-10{background:linear-gradient(135deg,#f97316,#fb7185)}
+    .icon-20{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    .icon-50{background:linear-gradient(135deg,#60a5fa,#7c3aed)}
+    .icon-75{background:linear-gradient(135deg,#93c5fd,#0ea5a9)}
+    .icon-100{background:linear-gradient(135deg,#ef4444,#f43f5e)}
+
+    /* Center the larger explanatory text in unlocks panel to avoid overflow */
+    .panel.unlocks h3, .panel.unlocks .muted-note, .panel.unlocks p { text-align:center; }
+    .panel.unlocks { padding-bottom:18px; } /* extra breathing room */
+
+    .muted-note{font-weight:600;color:var(--muted);font-size:13px;margin-top:8px}
   </style>
 </head>
 <body>
@@ -120,46 +186,105 @@
     </header>
 
     <main>
-      <!-- Calendar (September only) -->
+      <!-- Left column: Calendar -->
       <section class="panel calendar" aria-label="Calendar">
         <div class="cal-header">
           <div>
-            <!-- month label remains static for this site (September only) -->
             <h2 id="monthLabel">September 2025</h2>
-            <div class="legend"><span class="dot" style="background:rgba(16,185,129,.9);width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:8px"></span> Video added <span style="margin-left:14px;display:inline-block;width:10px;height:10px;border-radius:999px;background:rgba(239,68,68,.8);margin-right:8px"></span> No video yet</div>
+            <div class="legend">
+              <span class="key" style="background:linear-gradient(135deg, rgba(124,58,237,1), rgba(34,211,238,1)); box-shadow:0 8px 20px rgba(34,50,80,.14)"></span> Video added
+              <span class="key" style="background:linear-gradient(135deg, rgba(239,68,68,1), rgba(239,110,110,1)); margin-left:14px"></span> No video yet
+            </div>
           </div>
         </div>
 
-        <!-- day-of-week header -->
         <div class="grid" id="dowRow" aria-hidden="true"></div>
-        <!-- days will be populated here -->
         <div class="grid" id="daysGrid" role="grid" aria-label="September days"></div>
       </section>
 
-      <!-- Player Panel -->
-      <section class="panel player" aria-label="Video player">
-        <div class="player-card">
-          <!-- Frame contains the actual player or a placeholder. Shimmer is applied to this frame specifically. -->
-          <div id="playerFrame" class="frame shimmer" role="region" aria-label="Video player">
-            <div id="playerMount" class="player-content" aria-live="polite">
-              <!-- initial placeholder (will be replaced when a video is selected) -->
-              <div class="placeholder">Select a date to watch the video</div>
+      <!-- Right column: player + unlocks -->
+      <aside class="right-col">
+        <!-- Player Panel -->
+        <section class="panel player" aria-label="Video player">
+          <div class="player-card">
+            <div id="playerFrame" class="frame shimmer" role="region" aria-label="Video player">
+              <div id="playerMount" class="player-content" aria-live="polite">
+                <div class="placeholder">Select a date to watch the video</div>
+              </div>
             </div>
-          </div>
 
-          <div class="meta">
-            <div>
-              <strong id="selectedDateLabel">No date selected</strong>
-              <div><small id="statusLabel">Click a day on the calendar to play the video.</small></div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center">
-              <a class="btn primary" target="_blank" rel="noopener" href="https://fundraise.cancerresearchuk.org/page/joshuas-giving-page-1070">Donate Now</a>
-              <!-- Open on YouTube fallback; hidden until a video is loaded -->
-              <a id="openOnYouTube" class="btn ghost" target="_blank" rel="noopener" href="#" style="display:none">Open on YouTube</a>
+            <div class="meta">
+              <div>
+                <strong id="selectedDateLabel">No date selected</strong>
+                <div><small id="statusLabel">Click a day on the calendar to play the video.</small></div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <a class="btn primary" target="_blank" rel="noopener" href="https://fundraise.cancerresearchuk.org/page/joshuas-giving-page-1070">Donate Now</a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <!-- Donation unlocks informational area (cards) -->
+        <section class="panel unlocks" aria-label="Donation unlocks">
+          <div>
+            <h3>Donation unlocks</h3>
+            <p class="muted-note">One-time activations that affect the <strong>next</strong> video. Can be activated multiple times.</p>
+
+            <div class="unlock-grid" role="list">
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-5">£5</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">Suit press-ups</div>
+                  <div class="unlock-desc">I do my press-ups wearing a suit.</div>
+                </div>
+              </div>
+
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-10">£10</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">Shout your name</div>
+                  <div class="unlock-desc">I shout the donor's name in Bradford before the press-ups.</div>
+                </div>
+              </div>
+
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-20">£20</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">+100 press-ups</div>
+                  <div class="unlock-desc">I add 100 extra press-ups on top of the 100.</div>
+                </div>
+              </div>
+
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-50">£50</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">5K run</div>
+                  <div class="unlock-desc">I run 5K in addition to the press-ups (tracked for proof).</div>
+                </div>
+              </div>
+
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-75">£75</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">Freezing water</div>
+                  <div class="unlock-desc">I perform the press-ups in freezing cold water.</div>
+                </div>
+              </div>
+
+              <div class="unlock-card" role="listitem">
+                <div class="unlock-icon icon-100">£100</div>
+                <div class="unlock-info">
+                  <div class="unlock-amount">500 live</div>
+                  <div class="unlock-desc">I do 500 press-ups live on stream instead of 100.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="muted-note">These explain what each unlock does — donors activate them on the fundraising page.</div>
+          </div>
+        </section>
+      </aside>
     </main>
 
     <footer>
@@ -167,25 +292,37 @@
     </footer>
   </div>
 
+  <!-- Floating shave milestone (no wave). Hair emoji + subtle ring + click hint -->
+  <div class="shave-floating" aria-hidden="false">
+    <div id="shaveTube" class="shave-tube" role="button" aria-haspopup="dialog" aria-label="Shave milestone. Click for details">
+      <div class="shave-label">£500</div>
+      <div class="shave-emoji" aria-hidden="true">💇‍♂️</div>
+      <div class="click-hint" aria-hidden="true">Click</div>
+
+      <div id="tubeTrack" class="tube-track" aria-hidden="true">
+        <div id="tubeFill" class="tube-fill" style="height:0%"></div>
+        <div id="currentLabel" class="current-label" style="display:none">£0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal with gentle fade -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">£500 shave milestone</h3>
+      <p>If we reach £500 by the end of the fundraiser, I will shave my head on live on video. Thank you for all your donations, every little helps.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://fundraise.cancerresearchuk.org/page/joshuas-giving-page-1070" target="_blank" rel="noopener">Donate now</a>
+        <button id="modalOk" class="btn ghost">OK</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     /* =========================
-       Configuration: edit this object only
-       Keys must be exact ISO dates (YYYY-MM-DD). Only September entries are relevant.
-
-       To add a new video, add a single line like:
-         '2025-09-02': 'https://youtube.com/shorts/VIDEO_ID',
-       Supported URL forms:
-         - https://youtube.com/watch?v=VIDEO_ID
-         - https://youtu.be/VIDEO_ID
-         - https://youtube.com/shorts/VIDEO_ID
-         - https://www.youtube.com/embed/VIDEO_ID
-       The script will extract the VIDEO_ID and create an iframe that fills the square player.
-
-       NOTE: values should be plain strings (URLs). Avoid pasting entire iframe HTML — the script handles URLs cleanly.
+       CONFIGURATION
        ========================= */
-
     const videosByDate = {
-      // Day 1 (you supplied this link)
       '2025-09-01': 'https://youtube.com/shorts/2EaHb57-M04?feature=share',
       '2025-09-02': 'https://youtube.com/shorts/6wCqKku0kuU?feature=share',
       '2025-09-03': 'https://youtube.com/shorts/O54byQrUlQ8',
@@ -194,100 +331,59 @@
       '2025-09-06': 'https://youtu.be/35SlBeLvdRY',
       '2025-09-07': 'https://youtube.com/shorts/vAv4QMvGNOA',
       '2025-09-08': 'https://youtube.com/shorts/ciuumtW0mLQ'
-      // add more days here in the same format
     };
 
+    const SHAVE_MILESTONE_AMOUNT = 500;
+    const CURRENT_DONATIONS = 125;
+
     /* -------------------------
-       Cached DOM references
+       DOM refs
        ------------------------- */
     const monthLabel = document.getElementById('monthLabel');
     const dowRow = document.getElementById('dowRow');
     const daysGrid = document.getElementById('daysGrid');
-    const playerFrame = document.getElementById('playerFrame'); // contains shimmer overlay
-    const playerMount = document.getElementById('playerMount'); // content inside the frame
+    const playerFrame = document.getElementById('playerFrame');
+    const playerMount = document.getElementById('playerMount');
     const selectedDateLabel = document.getElementById('selectedDateLabel');
     const statusLabel = document.getElementById('statusLabel');
     const latestBtn = document.getElementById('latestBtn');
-    const openOnYouTube = document.getElementById('openOnYouTube');
 
-    // Fixed target (September 2025)
+    const tubeFill = document.getElementById('tubeFill');
+    const shaveTube = document.getElementById('shaveTube');
+    const tubeTrack = document.getElementById('tubeTrack');
+    const currentLabel = document.getElementById('currentLabel');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalOk = document.getElementById('modalOk');
+
     const TARGET_YEAR = 2025;
-    const TARGET_MONTH = 8; // 0-indexed (8 = September)
+    const TARGET_MONTH = 8; // September
 
     /* -------------------------
-       Helper functions
+       YouTube parse/embed (from your reliable snippet)
        ------------------------- */
-    function pad(n){ return String(n).padStart(2,'0'); }
-
-    function safeSetHash(iso){
-      try {
-        if(typeof history.replaceState === 'function') history.replaceState(null,'',`#${iso}`);
-        else location.hash = `#${iso}`;
-      } catch (err) {
-        // ignore
-      }
-    }
-
-    function showPlaceholder(){
-      playerMount.innerHTML = '<div class="placeholder">Select a date to watch the video</div>';
-      playerFrame.classList.add('shimmer');
-      openOnYouTube.style.display = 'none';
-      openOnYouTube.href = '#';
-    }
-
-    /* Extract YouTube video ID from common URL forms.
-       Returns 11-character ID or null.
-    */
     function parseYouTubeID(url){
       if(!url || typeof url !== 'string') return null;
       const s = url.trim();
-
-      // common patterns: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/shorts/ID, youtube.com/embed/ID
       const m = s.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/);
       if(m && m[1]) return m[1];
-
-      // fallback: try URLSearchParams for v=
       try {
         const u = new URL(s, 'https://example.com');
         const v = u.searchParams.get('v');
         if(v && /^[A-Za-z0-9_-]{11}$/.test(v)) return v;
-      } catch(e){ /* ignore malformed URL */ }
-
-      // final fallback: last path segment (may catch some valid IDs)
+      } catch(e){}
       const seg = s.split('/').filter(Boolean).pop().split('?')[0];
       if(seg && /^[A-Za-z0-9_-]{11}$/.test(seg)) return seg;
-
       return null;
     }
 
-    /* Build the player inside the square frame.
-       Accepts either:
-         - a URL string (common case)
-         - or an HTML string containing an iframe (less common)
-    */
     function makePlayerFromSource(source){
       playerFrame.classList.remove('shimmer');
-      playerMount.innerHTML = ''; // clear
-
-      if(!source) {
-        showPlaceholder();
-        return;
-      }
-
-      if(typeof source !== 'string') {
-        // not expected, but fallback
-        playerMount.innerHTML = '<div class="placeholder">Invalid video source</div>';
-        return;
-      }
-
+      playerMount.innerHTML = '';
+      if(!source){ showPlaceholder(); return; }
+      if(typeof source !== 'string'){ playerMount.innerHTML = '<div class="placeholder">Invalid video source</div>'; return; }
       const trimmed = source.trim();
-
-      // If the user accidentally pasted full iframe or embed HTML, insert it directly.
       if(trimmed.startsWith('<') && trimmed.indexOf('iframe') !== -1){
-        // ensure the embedded iframe fills the container
-        // wrap in a container and force the iframe to absolute fill
         playerMount.innerHTML = '<div style="position:relative;height:100%;">' + trimmed + '</div>';
-        // try to find and adjust iframe attributes
         const iframe = playerMount.querySelector('iframe');
         if(iframe){
           iframe.classList.add('player-iframe');
@@ -296,142 +392,109 @@
           iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
           iframe.setAttribute('allowfullscreen','');
         }
-        // Set openOnYouTube to point to src (if present)
-        const src = (playerMount.querySelector('iframe') || {}).src || null;
-        if(src){
-          openOnYouTube.href = src;
-          openOnYouTube.style.display = 'inline-flex';
-        } else {
-          openOnYouTube.style.display = 'none';
-        }
         return;
       }
-
-      // Otherwise treat as URL
       const id = parseYouTubeID(trimmed);
       if(!id){
-        // If we can't parse, show a fallback link
         playerMount.innerHTML = `<div class="placeholder">Can't parse the YouTube URL. <div style="margin-top:10px"><a target="_blank" rel="noopener" href="${escapeHtml(trimmed)}">Open link</a></div></div>`;
-        openOnYouTube.href = trimmed;
-        openOnYouTube.style.display = 'inline-flex';
         return;
       }
-
-      // Use privacy-enhanced YouTube domain to reduce tracking (you can switch to normal domain if you prefer)
       const embedUrl = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
-
       const iframe = document.createElement('iframe');
       iframe.className = 'player-iframe';
       iframe.src = embedUrl;
       iframe.setAttribute('frameborder','0');
-      iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
       iframe.setAttribute('allowfullscreen','');
       iframe.title = 'YouTube video player';
-
-      // Provide a small accessible fallback link for users who want to open on YouTube
-      openOnYouTube.href = `https://youtube.com/watch?v=${id}`;
-      openOnYouTube.style.display = 'inline-flex';
-
       playerMount.appendChild(iframe);
     }
 
-    // simple escaper for inserting unknown hrefs into markup (used only for fallback link)
-    function escapeHtml(s){
-      return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function showPlaceholder(){ playerMount.innerHTML = '<div class="placeholder">Select a date to watch the video</div>'; playerFrame.classList.add('shimmer'); }
 
     /* -------------------------
-       Calendar rendering (September-only)
+       Calendar rendering
        ------------------------- */
-    function buildDOW(){
-      const names = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-      dowRow.innerHTML = '';
-      names.forEach(n => { const el = document.createElement('div'); el.className='dow'; el.textContent=n; dowRow.appendChild(el);} );
-    }
-
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function buildDOW(){ const names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; dowRow.innerHTML=''; names.forEach(n=>{const el=document.createElement('div');el.className='dow';el.textContent=n;dowRow.appendChild(el);}); }
     function buildCalendar(){
-      const year = TARGET_YEAR;
-      const month = TARGET_MONTH;
+      const year = TARGET_YEAR; const month = TARGET_MONTH;
       monthLabel.textContent = 'September ' + year;
-
       const first = new Date(year, month, 1);
       const last = new Date(year, month+1, 0);
-
       daysGrid.innerHTML = '';
-
-      // Lead blanks so Monday is the first column
-      let startDow = first.getDay(); // 0=Sun .. 6=Sat
-      if(startDow === 0) startDow = 7; // convert Sunday to 7
-      for(let i=1;i<startDow;i++){
-        const empty = document.createElement('div');
-        empty.className = 'day is-empty';
-        daysGrid.appendChild(empty);
-      }
-
-      // Create each day of the month
+      let startDow = first.getDay(); if(startDow === 0) startDow = 7;
+      for(let i=1;i<startDow;i++){ const empty=document.createElement('div'); empty.className='day is-empty'; daysGrid.appendChild(empty); }
       for(let d=1; d<=last.getDate(); d++){
         const date = new Date(year, month, d);
         const iso = `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(d)}`;
-
         const cell = document.createElement('div');
         cell.className = 'day';
         cell.innerHTML = `<div class="num">${d}</div>`;
-
         const hasVideo = Boolean(videosByDate[iso]);
-        const badge = document.createElement('div');
-        badge.className = 'badge ' + (hasVideo ? '' : 'miss');
-        badge.textContent = hasVideo ? 'Video' : '—';
-        cell.appendChild(badge);
-
-        // keyboard + screen reader friendly
+        cell.classList.add(hasVideo ? 'has-video' : 'no-video');
         cell.tabIndex = 0;
         cell.setAttribute('role','button');
         cell.setAttribute('aria-label', `${iso} ${hasVideo ? 'has video' : 'no video yet'}`);
-
-        // click/keyboard handler
-        cell.addEventListener('click', () => selectDate(iso));
-        cell.addEventListener('keydown', (e) => { if(e.key==='Enter' || e.key===' '){ e.preventDefault(); selectDate(iso); } });
-
+        cell.addEventListener('click', ()=>selectDate(iso));
+        cell.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); selectDate(iso); } });
         daysGrid.appendChild(cell);
       }
     }
 
-    /* -------------------------
-       Selection logic
-       ------------------------- */
     function selectDate(iso){
       selectedDateLabel.textContent = new Date(iso).toDateString();
       const source = videosByDate[iso];
       if(source){
         statusLabel.textContent = 'Loading…';
-        try {
-          makePlayerFromSource(source);
-        } catch(e){
-          console.error('Player render failed', e);
-          playerMount.innerHTML = '<div class="placeholder">Video failed to load.</div>';
-        }
-        try { document.getElementById('playerFrame')?.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){}
+        try{ makePlayerFromSource(source); } catch(e){ console.error(e); playerMount.innerHTML = '<div class="placeholder">Video failed to load.</div>'; }
+        try{ document.getElementById('playerFrame')?.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){}
         safeSetHash(iso);
-      } else {
-        statusLabel.textContent = 'No video uploaded yet for this date.';
-        showPlaceholder();
-      }
+      } else { statusLabel.textContent = 'No video uploaded yet for this date.'; showPlaceholder(); }
+    }
+    function safeSetHash(iso){ try{ if(typeof history.replaceState === 'function') history.replaceState(null,'',`#${iso}`); else location.hash = `#${iso}`; }catch(e){} }
+    function getLatestDateWithVideo(){ const keys = Object.keys(videosByDate).sort(); return keys.length ? keys[keys.length-1] : null; }
+    latestBtn.addEventListener('click', ()=>{ const latest = getLatestDateWithVideo(); if(latest) selectDate(latest); else statusLabel.textContent='No videos added yet.'; });
+
+    /* -------------------------
+       Shave tube: fill + floating number above top of fill
+       ------------------------- */
+    function renderShaveTube(){
+      const pct = Math.max(0, Math.min(100, (CURRENT_DONATIONS / SHAVE_MILESTONE_AMOUNT) * 100 ));
+      tubeFill.style.height = pct + '%';
+      tubeFill.style.borderRadius = '999px';
+      tubeFill.style.background = (CURRENT_DONATIONS >= SHAVE_MILESTONE_AMOUNT)
+        ? 'linear-gradient(180deg,var(--accent), #9ef6d1)'
+        : 'linear-gradient(180deg,var(--brand-2), var(--brand))';
+
+      requestAnimationFrame(()=>{
+        const trackRect = tubeTrack.getBoundingClientRect();
+        const trackHeight = Math.max(8, trackRect.height);
+        const relY = Math.round(trackHeight * (1 - pct/100)); // px from top of track
+        const labelOffset = 18; // distance above the fill
+        const topPx = Math.max(6, Math.min(trackHeight - 12, relY - labelOffset));
+        currentLabel.style.top = topPx + 'px';
+        currentLabel.style.display = 'block';
+        currentLabel.textContent = '£' + String(CURRENT_DONATIONS);
+      });
     }
 
     /* -------------------------
-       Utility: find latest uploaded date (lexicographical sort works for ISO strings)
+       Modal fade in/out (gentle)
        ------------------------- */
-    function getLatestDateWithVideo(){
-      const keys = Object.keys(videosByDate).sort();
-      return keys.length ? keys[keys.length-1] : null;
+    function openModal(){
+      modalBackdrop.classList.add('visible');
+      modalBackdrop.setAttribute('aria-hidden','false');
+    }
+    function closeModal(){
+      modalBackdrop.classList.remove('visible');
+      modalBackdrop.setAttribute('aria-hidden','true');
     }
 
-    // wire up the "latest" button — jumps to the latest uploaded video
-    latestBtn.addEventListener('click', ()=>{
-      const latest = getLatestDateWithVideo();
-      if(latest){ selectDate(latest); }
-      else { statusLabel.textContent = 'No videos added yet.'; }
-    });
+    shaveTube.addEventListener('click', openModal);
+    modalOk.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click',(e)=>{ if(e.target === modalBackdrop) closeModal(); });
 
     /* -------------------------
        Initialization
@@ -439,25 +502,12 @@
     buildDOW();
     buildCalendar();
     showPlaceholder();
-
-    // Auto-open demo day 1 if present
+    setTimeout(renderShaveTube, 200);
     const demoIso = `${TARGET_YEAR}-09-01`;
-    if(videosByDate[demoIso]){
-      // small delay so the calendar renders first
-      setTimeout(()=>selectDate(demoIso), 120);
-    }
-
-    // If the URL contains a hash for an ISO date, try to open it (guarded)
-    try {
-      if(location.hash && /^#\d{4}-\d{2}-\d{2}$/.test(location.hash)){
-        const iso = location.hash.slice(1);
-        const d = new Date(iso);
-        if(!isNaN(+d)) selectDate(iso);
-      }
-    } catch(e){ /* ignore sandbox URL oddities */ }
-
+    if(videosByDate[demoIso]) setTimeout(()=>selectDate(demoIso), 120);
+    try { if(location.hash && /^#\d{4}-\d{2}-\d{2}$/.test(location.hash)){ const iso = location.hash.slice(1); const d = new Date(iso); if(!isNaN(+d)) selectDate(iso); } } catch(e){}
+    window.addEventListener('resize', ()=>{ setTimeout(renderShaveTube, 120); });
+    window.addEventListener('load', ()=>{ setTimeout(renderShaveTube, 300); });
   </script>
-
-  <!-- Instagram embed script removed — not needed anymore -->
 </body>
 </html>
