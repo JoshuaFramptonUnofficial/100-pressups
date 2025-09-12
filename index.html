@@ -19,6 +19,8 @@
       --accent:#10b981;
       --danger:#ef4444;
       --shadow: 0 15px 40px rgba(0,0,0,.45);
+      --memorial-start:#6d28d9;
+      --memorial-end:#a78bfa;
     }
     *{box-sizing:border-box}
     html,body{min-height:100vh;height:100%}
@@ -90,6 +92,9 @@
     .day.has-video::after{background:linear-gradient(135deg,var(--accent),rgba(16,185,129,.7));box-shadow:0 6px 14px rgba(16,185,129,.06)}
     .day.no-video::after{background:linear-gradient(135deg,var(--danger),rgba(239,68,68,.8));box-shadow:0 6px 14px rgba(239,68,68,.04)}
 
+    /* Memorial day bubble */
+    .day.memorial::after{content:'';position:absolute;right:8px;bottom:8px;width:18px;height:18px;border-radius:6px;z-index:2;background:linear-gradient(135deg,var(--memorial-start),var(--memorial-end));box-shadow:0 6px 14px rgba(124,58,237,.08)}
+
     /* Player side */
     .right-col{display:flex;flex-direction:column;gap:12px}
     .player{padding:16px}
@@ -140,6 +145,9 @@
     .modal h3{margin:0 0 8px 0}
     .modal p{margin:0 0 14px 0;color:var(--muted)}
     .modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+
+    /* Memorial visual inside modal */
+    .memorial-visual{width:96px;height:96px;border-radius:999px;display:grid;place-items:center;font-size:42px;background:linear-gradient(135deg,var(--memorial-start),var(--memorial-end));box-shadow:0 18px 40px rgba(109,40,217,.15);color:white}
 
     /* Unlock cards spacing */
     .unlock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px}
@@ -306,7 +314,7 @@
     </div>
   </div>
 
-  <!-- Modal with gentle fade -->
+  <!-- Modal with gentle fade (shave milestone) -->
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document" aria-labelledby="modalTitle">
       <h3 id="modalTitle">£500 shave milestone</h3>
@@ -314,6 +322,20 @@
       <div class="actions">
         <a class="btn primary" href="https://fundraise.cancerresearchuk.org/page/joshuas-giving-page-1070" target="_blank" rel="noopener">Donate now</a>
         <button id="modalOk" class="btn ghost">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Memorial modal (glassy, same visual language) -->
+  <div id="memorialBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="memorialTitle">
+      <div style="display:grid;place-items:center;gap:12px">
+        <div class="memorial-visual" aria-hidden="true">🕯️</div>
+        <h3 id="memorialTitle">In memory of Charlie Kirk</h3>
+        <p class="muted-note">We remember and honour Charlie.</p>
+        <div class="actions">
+          <button id="memorialOk" class="btn ghost">Close</button>
+        </div>
       </div>
     </div>
   </div>
@@ -333,6 +355,12 @@
       '2025-09-08': 'https://youtube.com/shorts/ciuumtW0mLQ',
       '2025-09-09': 'https://youtube.com/shorts/38BtnzzbQrM?feature=share'
     };
+
+    // Memorial dates (explicit ISO strings)
+    const memorialDates = new Set([
+      '2025-09-10',
+      '2025-09-11'
+    ]);
 
     const SHAVE_MILESTONE_AMOUNT = 500;
     const CURRENT_DONATIONS = 125;
@@ -356,8 +384,11 @@
     const modalBackdrop = document.getElementById('modalBackdrop');
     const modalOk = document.getElementById('modalOk');
 
+    const memorialBackdrop = document.getElementById('memorialBackdrop');
+    const memorialOk = document.getElementById('memorialOk');
+
     const TARGET_YEAR = 2025;
-    const TARGET_MONTH = 8; // September
+    const TARGET_MONTH = 8; // September (0-indexed)
 
     /* -------------------------
        YouTube parse/embed (from your reliable snippet)
@@ -433,13 +464,24 @@
         const cell = document.createElement('div');
         cell.className = 'day';
         cell.innerHTML = `<div class="num">${d}</div>`;
-        const hasVideo = Boolean(videosByDate[iso]);
-        cell.classList.add(hasVideo ? 'has-video' : 'no-video');
-        cell.tabIndex = 0;
-        cell.setAttribute('role','button');
-        cell.setAttribute('aria-label', `${iso} ${hasVideo ? 'has video' : 'no video yet'}`);
-        cell.addEventListener('click', ()=>selectDate(iso));
-        cell.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); selectDate(iso); } });
+        const isMemorial = memorialDates.has(iso);
+        if(isMemorial){
+          cell.classList.add('memorial');
+          cell.tabIndex = 0;
+          cell.setAttribute('role','button');
+          cell.setAttribute('aria-label', `${iso} memorial`);
+          // click/keyboard open memorial
+          cell.addEventListener('click', ()=>openMemorialForDate(iso));
+          cell.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openMemorialForDate(iso); } });
+        } else {
+          const hasVideo = Boolean(videosByDate[iso]);
+          cell.classList.add(hasVideo ? 'has-video' : 'no-video');
+          cell.tabIndex = 0;
+          cell.setAttribute('role','button');
+          cell.setAttribute('aria-label', `${iso} ${hasVideo ? 'has video' : 'no video yet'}`);
+          cell.addEventListener('click', ()=>selectDate(iso));
+          cell.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); selectDate(iso); } });
+        }
         daysGrid.appendChild(cell);
       }
     }
@@ -452,7 +494,15 @@
         try{ makePlayerFromSource(source); } catch(e){ console.error(e); playerMount.innerHTML = '<div class="placeholder">Video failed to load.</div>'; }
         try{ document.getElementById('playerFrame')?.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){}
         safeSetHash(iso);
-      } else { statusLabel.textContent = 'No video uploaded yet for this date.'; showPlaceholder(); }
+      } else { statusLabel.textContent = 'No video uploaded yet for this date.'; showPlaceholder(); safeSetHash(iso); }
+    }
+    function openMemorialForDate(iso){
+      // blank the player, show memorial modal
+      selectedDateLabel.textContent = new Date(iso).toDateString();
+      statusLabel.textContent = 'In memory — no video for this date.';
+      showPlaceholder();
+      safeSetHash(iso);
+      openMemorialModal();
     }
     function safeSetHash(iso){ try{ if(typeof history.replaceState === 'function') history.replaceState(null,'',`#${iso}`); else location.hash = `#${iso}`; }catch(e){} }
     function getLatestDateWithVideo(){ const keys = Object.keys(videosByDate).sort(); return keys.length ? keys[keys.length-1] : null; }
@@ -469,7 +519,7 @@
         ? 'linear-gradient(180deg,var(--accent), #9ef6d1)'
         : 'linear-gradient(180deg,var(--brand-2), var(--brand))';
 
-      requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{ 
         const trackRect = tubeTrack.getBoundingClientRect();
         const trackHeight = Math.max(8, trackRect.height);
         const relY = Math.round(trackHeight * (1 - pct/100)); // px from top of track
@@ -493,9 +543,21 @@
       modalBackdrop.setAttribute('aria-hidden','true');
     }
 
+    function openMemorialModal(){
+      memorialBackdrop.classList.add('visible');
+      memorialBackdrop.setAttribute('aria-hidden','false');
+    }
+    function closeMemorialModal(){
+      memorialBackdrop.classList.remove('visible');
+      memorialBackdrop.setAttribute('aria-hidden','true');
+    }
+
     shaveTube.addEventListener('click', openModal);
     modalOk.addEventListener('click', closeModal);
     modalBackdrop.addEventListener('click',(e)=>{ if(e.target === modalBackdrop) closeModal(); });
+
+    memorialOk.addEventListener('click', closeMemorialModal);
+    memorialBackdrop.addEventListener('click',(e)=>{ if(e.target === memorialBackdrop) closeMemorialModal(); });
 
     /* -------------------------
        Initialization
@@ -506,7 +568,11 @@
     setTimeout(renderShaveTube, 200);
     const demoIso = `${TARGET_YEAR}-09-01`;
     if(videosByDate[demoIso]) setTimeout(()=>selectDate(demoIso), 120);
-    try { if(location.hash && /^#\d{4}-\d{2}-\d{2}$/.test(location.hash)){ const iso = location.hash.slice(1); const d = new Date(iso); if(!isNaN(+d)) selectDate(iso); } } catch(e){}
+    try { if(location.hash && /^#\d{4}-\d{2}-\d{2}$/.test(location.hash)){ const iso = location.hash.slice(1); const d = new Date(iso); if(!isNaN(+d)){
+      // If the hash is a memorial, open memorial modal; otherwise try to select date
+      if(memorialDates.has(iso)){ selectedDateLabel.textContent = new Date(iso).toDateString(); statusLabel.textContent = 'In memory — no video for this date.'; showPlaceholder(); openMemorialModal(); safeSetHash(iso); }
+      else selectDate(iso);
+    } } } catch(e){}
     window.addEventListener('resize', ()=>{ setTimeout(renderShaveTube, 120); });
     window.addEventListener('load', ()=>{ setTimeout(renderShaveTube, 300); });
   </script>
