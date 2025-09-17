@@ -1,13 +1,40 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>100 Pushups Fundraiser</title>
+  <title>100 Press-Ups a Day Fundraiser</title>
   <meta name="description" content="Joshua's 100 press-ups a day in September. Watch daily videos & donate to Cancer Research UK." />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Joshua" />
+  <meta name="keywords" content="100 pushups, press-ups, charity, Cancer Research UK, fundraiser, daily pushups, Joshua" />
+  <meta name="theme-color" content="#0f1223" />
+
+  <!-- Open Graph / Social (populated dynamically where possible) -->
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="100 Press-Ups a Day Fundraiser" />
+  <meta property="og:description" content="Joshua's 100 press-ups a day in September. Watch daily videos & donate to Cancer Research UK." />
+  <meta property="og:url" content="" id="og-url" />
+  <meta property="og:image" content="" id="og-image" />
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="100 Press-Ups a Day Fundraiser" />
+  <meta name="twitter:description" content="Joshua's 100 press-ups a day in September. Watch daily videos & donate to Cancer Research UK." />
+  <meta name="twitter:image" content="" id="twitter-image" />
+
+  <!-- Canonical (will be set dynamically to avoid hardcoded mistakes) -->
+  <link rel="canonical" href="" id="canonical-link" />
+
+  <!-- Perf hints for fonts + youtube thumbnails -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#0f1223;
@@ -170,6 +197,9 @@
     .panel.unlocks { padding-bottom:18px; } /* extra breathing room */
 
     .muted-note{font-weight:600;color:var(--muted);font-size:13px;margin-top:8px}
+
+    /* --- Small legal/precaution note below the video -- subtle by design (low contrast) --- */
+    .video-smallprint{font-size:12px;color:rgba(255,255,255,0.14);margin-top:10px;line-height:1.2}
   </style>
 </head>
 <body>
@@ -220,6 +250,9 @@
                 <div class="placeholder">Select a date to watch the video</div>
               </div>
             </div>
+
+            <!-- subtle legal smallprint below the embed (intentionally low contrast) -->
+            <p class="video-smallprint" id="videoSmallprint">Videos are not an accurate measure of pushups done.</p>
 
             <div class="meta">
               <div>
@@ -412,6 +445,81 @@
       return null;
     }
 
+    /* -------------------------
+       SEO helpers: dynamic meta + JSON-LD injection
+       ------------------------- */
+    function getLatestDateWithVideo(){ const keys = Object.keys(videosByDate).sort(); return keys.length ? keys[keys.length-1] : null; }
+
+    function setCanonicalAndSocialMeta(){
+      try{
+        // canonical: default to origin+pathname to avoid hardcoding
+        let canonicalLink = document.getElementById('canonical-link') || document.querySelector('link[rel="canonical"]');
+        if(!canonicalLink){ canonicalLink = document.createElement('link'); canonicalLink.rel='canonical'; canonicalLink.id='canonical-link'; document.head.appendChild(canonicalLink); }
+        canonicalLink.href = window.location.origin + window.location.pathname;
+
+        // set og:url
+        const ogurl = document.getElementById('og-url') || document.querySelector('meta[property="og:url"]');
+        if(ogurl) ogurl.setAttribute('content', canonicalLink.href);
+
+        // use latest video thumbnail for og/twitter image if available
+        const metaOgImage = document.getElementById('og-image');
+        const metaTwitterImage = document.getElementById('twitter-image');
+        const latest = getLatestDateWithVideo();
+        const latestSource = latest ? videosByDate[latest] : null;
+        const id = parseYouTubeID(latestSource || '');
+        const thumb = id ? (`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`) : '';
+        if(thumb){ if(metaOgImage) metaOgImage.setAttribute('content', thumb); if(metaTwitterImage) metaTwitterImage.setAttribute('content', thumb); }
+      }catch(e){ /* silent */ }
+    }
+
+    function injectPageLD(){
+      try{
+        // remove if exists
+        const existing = document.getElementById('page-ld'); if(existing) existing.remove();
+        const ld = {
+          "@context":"https://schema.org",
+          "@type":"WebPage",
+          "name":"100 Press-Ups a Day Fundraiser",
+          "description":"Joshua's 100 press-ups a day in September. Watch daily videos & donate to Cancer Research UK.",
+          "url": window.location.origin + window.location.pathname,
+          "author": { "@type":"Person", "name":"Joshua" },
+          "mainEntity": {
+            "@type": "Event",
+            "name": "100 Press-Ups a Day Fundraiser",
+            "startDate": "2025-09-01",
+            "endDate": "2025-09-30",
+            "location": {"@type":"VirtualLocation","url":"https://fundraise.cancerresearchuk.org/page/joshuas-giving-page-1070"}
+          }
+        };
+        const s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'page-ld'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+      }catch(e){}
+    }
+
+    function injectVideoLD(iso, source){
+      try{
+        const existing = document.getElementById('video-ld'); if(existing) existing.remove();
+        const id = parseYouTubeID(source||'');
+        if(!id) return;
+        const embedUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+        const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+        const ld = {
+          "@context":"https://schema.org",
+          "@type":"VideoObject",
+          "name": `${new Date(iso).toDateString()} — 100 Press-Ups`,
+          "description":"Daily pushups video from Joshua's 100 pushups fundraiser. Please note videos are not an accurate measure of pushups done.",
+          "thumbnailUrl": [`https://i.ytimg.com/vi/${id}/hqdefault.jpg`],
+          "uploadDate": iso,
+          "embedUrl": embedUrl,
+          "contentUrl": watchUrl,
+          "author": {"@type":"Person","name":"Joshua"}
+        };
+        const s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'video-ld'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+      }catch(e){}
+    }
+
+    /* -------------------------
+       Player builder
+       ------------------------- */
     function makePlayerFromSource(source){
       playerFrame.classList.remove('shimmer');
       playerMount.innerHTML = '';
@@ -498,6 +606,8 @@
         try{ makePlayerFromSource(source); } catch(e){ console.error(e); playerMount.innerHTML = '<div class="placeholder">Video failed to load.</div>'; }
         try{ document.getElementById('playerFrame')?.scrollIntoView({behavior:'smooth', block:'start'}); } catch(e){}
         safeSetHash(iso);
+        // SEO: inject video structured data for this specific date
+        try{ injectVideoLD(iso, source); } catch(e){}
       } else { statusLabel.textContent = 'No video uploaded yet for this date.'; showPlaceholder(); safeSetHash(iso); }
     }
     function openMemorialForDate(iso){
@@ -509,7 +619,7 @@
       openMemorialModal();
     }
     function safeSetHash(iso){ try{ if(typeof history.replaceState === 'function') history.replaceState(null,'',`#${iso}`); else location.hash = `#${iso}`; }catch(e){} }
-    function getLatestDateWithVideo(){ const keys = Object.keys(videosByDate).sort(); return keys.length ? keys[keys.length-1] : null; }
+
     latestBtn.addEventListener('click', ()=>{ const latest = getLatestDateWithVideo(); if(latest) selectDate(latest); else statusLabel.textContent='No videos added yet.'; });
 
     /* -------------------------
@@ -577,6 +687,10 @@
       if(memorialDates.has(iso)){ selectedDateLabel.textContent = new Date(iso).toDateString(); statusLabel.textContent = 'In memory — no video for this date.'; showPlaceholder(); openMemorialModal(); safeSetHash(iso); }
       else selectDate(iso);
     } } } catch(e){}
+
+    // SEO init: canonical, OG/Twitter images, and page LD
+    setTimeout(()=>{ try{ setCanonicalAndSocialMeta(); injectPageLD(); }catch(e){} }, 250);
+
     window.addEventListener('resize', ()=>{ setTimeout(renderShaveTube, 120); });
     window.addEventListener('load', ()=>{ setTimeout(renderShaveTube, 300); });
   </script>
